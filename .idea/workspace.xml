@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8988abf2-f228-46c0-aee4-2a098a4ba7af" name="Default" comment="" />
+    <list default="true" id="8988abf2-f228-46c0-aee4-2a098a4ba7af" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,14 +49,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="window_beam_pdkit.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="window_beam_pdkit.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/window_beam_pdkit.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1950">
-              <caret line="130" column="39" selection-start-line="130" selection-start-column="39" selection-end-line="130" selection-end-column="39" />
+            <state relative-caret-position="210">
+              <caret line="129" column="23" selection-start-line="129" selection-start-column="17" selection-end-line="129" selection-end-column="23" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="119" selection-start-line="19" selection-start-column="119" selection-end-line="19" selection-end-column="119" />
             </state>
           </provider>
         </entry>
@@ -81,15 +92,18 @@
       <find>beam.window</find>
       <find>tp</find>
       <find>abs_e</find>
-      <find>pdkit.</find>
       <find>,3\n</find>
       <find>ExtractAndSumScore</find>
       <find>allowed_lateness</find>
+      <find>pdkit.</find>
     </findStrings>
     <replaceStrings>
       <replace>,2678\n</replace>
       <replace>,2675\n</replace>
     </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -105,6 +119,7 @@
         <option value="$PROJECT_DIR$/abs_energy_score.py" />
         <option value="$PROJECT_DIR$/window_beam_pdkit.py" />
         <option value="$PROJECT_DIR$/tremor_data_with_user.csv" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -122,6 +137,7 @@
     <option name="width" value="1404" />
     <option name="height" value="812" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -185,7 +201,7 @@
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
@@ -248,20 +264,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/absolute_energy.csv-00000-of-00001">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/python2.7/site-packages/pdkit/tremor_processor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="122">
           <caret line="362" column="20" selection-start-line="362" selection-start-column="8" selection-end-line="362" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tremor_data_with_user.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="15962" column="49" lean-forward="true" selection-start-line="15962" selection-start-column="49" selection-end-line="15962" selection-end-column="49" />
         </state>
       </provider>
     </entry>
@@ -295,13 +301,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/absolute_energy.csv-00000-of-00001">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tremor_data_with_user.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="15938" column="49" lean-forward="true" selection-start-line="15938" selection-start-column="49" selection-end-line="15938" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/window_beam_pdkit.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1950">
-          <caret line="130" column="39" selection-start-line="130" selection-start-column="39" selection-end-line="130" selection-end-column="39" />
+        <state relative-caret-position="210">
+          <caret line="129" column="23" selection-start-line="129" selection-start-column="17" selection-end-line="129" selection-end-column="23" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="119" selection-start-line="19" selection-start-column="119" selection-end-line="19" selection-end-column="119" />
         </state>
       </provider>
     </entry>
