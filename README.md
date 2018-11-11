@@ -17,5 +17,6 @@ It takes as input acceleration data with the id at each line:
 
 As an example take the file: `tremor_data_with_user.csv`
 
-In this example the method used from `pdkit` is `number_peaks` but any method will work as it is now. Just change line:
+In this example the method used from `pdkit` is `number_peaks` but any method will work as it is now. Just change
+[line](https://github.com/uh-joan/beam_pdkit/blob/master/window_beam_pdkit.py#L131)
 
