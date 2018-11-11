@@ -1,5 +1,7 @@
 # beam_pdkit
 
+![Beam Pdkit](https://github.com/uh-joan/beam_pdkit/blob/master/beam_pdkit.png)
+
 ## Install
 
 `pip install -r requirements.txt`
