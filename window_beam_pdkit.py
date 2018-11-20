@@ -18,7 +18,8 @@ import pandas as pd
 import time
 import datetime
 import pdkit
-
+import warnings
+warnings.filterwarnings("ignore")
 
 class TransformTimestampDoFn(beam.DoFn):
     def process(self, element):
@@ -72,7 +73,6 @@ class MyMeanCombineFn(beam.CombineFn):
         return sum_ / float(count)
 
 
-# [START extract_and_sum_score]
 class ExtractAndMeanMagSumAcc(beam.PTransform):
     """A transform to extract key/mag_sum_acc information and means the mag_sum_acc.
     The constructor argument `field` determines that 'user' info is extracted.
@@ -86,7 +86,6 @@ class ExtractAndMeanMagSumAcc(beam.PTransform):
                 | beam.Map(lambda elem: (elem[self.field], elem['mag_sum_acc']))
                 | beam.CombinePerKey(MyMeanCombineFn())
                 )
-# [END extract_and_sum_score]
 
 
 class ExtractDoFn(beam.DoFn):
@@ -128,7 +127,7 @@ class CalculatePDkitMethodDo(beam.DoFn):
             ser1 = pd.Series([float(v) for v in vals],
                              index=[pd.Timestamp(i) for i in ind])
             tp = pdkit.TremorProcessor()
-            yield user, tp.number_peaks(ser1)
+            yield user, tp.spkt_welch_density(ser1)[0][1]
         else:
             yield user, 0
 
@@ -213,7 +212,7 @@ class FormatDoFn(beam.DoFn):
 
 class UserDict(beam.DoFn):
     def process(self, team_score, window=beam.DoFn.WindowParam):
-        ts_format = '%H:%M:%S.%f UTC'
+        ts_format = '%H:%M:%S'
         user, result = team_score
         window_start = window.start.to_utc_datetime().strftime(ts_format)
         window_end = window.end.to_utc_datetime().strftime(ts_format)
@@ -297,8 +296,8 @@ def run(argv=None):
                     | 'UserScoresDict' >> beam.ParDo(UserDict())
                   )
 
-        pdkit_method_data = (grouped
-                 | 'Parse it' >> beam.Map(lambda elem: (elem['user'], elem['result']))
+        welch = (grouped
+                 | 'Parse it' >> beam.Map(lambda elem: (elem['user'], elem['result'], elem['start'], elem['end']))
                  # | 'GroupAndMean' >> beam.CombinePerKey(beam.combiners.MeanCombineFn())
                  )
 
@@ -323,33 +322,34 @@ def run(argv=None):
 
         # Format the counts into a PCollection of strings.
         def format_result(element):
-            (user, result) = element
-            return '%d,%f' % (user, result)
+            (user, result, start, end) = element
+            return '%d,%f,%s,%s' % (user, result, start, end)
 
-        output = pdkit_method_data | 'format' >> beam.Map(format_result)
+        output = welch | 'format' >> beam.Map(format_result)
 
         output | 'write' >> WriteToText(known_args.output)
 
         # abs_e | beam.ParDo(lambda (x): print(x))
         # abs_energy_list = (abs_e | 'Combine' >> beam.CombineGlobally(beam.combiners.ToDict()).without_defaults())
         # abs_energy_list | beam.ParDo(lambda (x): print(x))
+        # welch | beam.ParDo(lambda (x): print(x))
         #
         # abs_energy_list | beam.ParDo(lambda (x): print(x))
 
 
-    with beam.Pipeline(options=options) as q:
-        # Format the counts into a PCollection of strings.
-        def format_result(element):
-            (user, result) = element
-            return 'user_id(%d), value:%f' % (user, result)
-        abs_energy_windowed = (q
-                               | 'Read PDkit data' >> ReadFromText('absolute_energy.csv-00000-of-00001')
-                               | 'ParsePDkitData' >> beam.ParDo(ParsePDkitData())
-                               | 'Mean Combine' >> beam.CombinePerKey(beam.combiners.MeanCombineFn())
-                               | 'format pdkit data' >> beam.Map(format_result)
-                               )
-
-        abs_energy_windowed | beam.ParDo(lambda (x): print(x))
+    # with beam.Pipeline(options=options) as q:
+    #     # Format the counts into a PCollection of strings.
+    #     def format_result(element):
+    #         (user, result) = element
+    #         return 'user_id(%d), value:%f' % (user, result)
+    #     abs_energy_windowed = (q
+    #                            | 'Read PDkit data' >> ReadFromText('absolute_energy.csv-00000-of-00001')
+    #                            | 'ParsePDkitData' >> beam.ParDo(ParsePDkitData())
+    #                            | 'Mean Combine' >> beam.CombinePerKey(beam.combiners.MeanCombineFn())
+    #                            | 'format pdkit data' >> beam.Map(format_result)
+    #                            )
+    #
+    #     abs_energy_windowed | beam.ParDo(lambda (x): print(x))
 
 # [END main]
 
