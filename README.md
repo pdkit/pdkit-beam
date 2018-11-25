@@ -62,4 +62,6 @@ for [google cloud](https://cloud.google.com/sdk/docs/). Don't forget to create a
 the [command line](https://cloud.google.com/pubsub/docs/quickstart-cli) or using the [web interface](https://console.cloud.google.com/cloudpubsub)
 
 `Tip`: If you want to stream a file line by line to `gcloud` this command might come in handy:
-`cat filename.csv | while read line; do gcloud pubsub topics publish topicName --message "$line"; done`
+```
+cat filename.csv | while read line; do gcloud pubsub topics publish topicName --message "$line"; done
+```
