@@ -59,7 +59,7 @@ This example shows how to use the google cloud streaming. Pass the following par
 
 You'll need to register to [google cloud services](https://cloud.google.com/pubsub/?authuser=1). Install instructions
 for [google cloud](https://cloud.google.com/sdk/docs/). Don't forget to create a project and a topic using for example
-the [command line](https://cloud.google.com/pubsub/docs/quickstart-cli).
+the [command line](https://cloud.google.com/pubsub/docs/quickstart-cli) or using the [web interface](https://console.cloud.google.com/cloudpubsub)
 
 `Tip`: If you want to stream a file line by line to `gcloud` this command might come in handy:
 `cat filename.csv | while read line; do gcloud pubsub topics publish topicName --message "$line"; done`
