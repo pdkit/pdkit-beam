@@ -8,7 +8,7 @@
 
 ## Run
 
-`python window_beam_kit.py`
+`python welch_beam_pdkit.py`
 
 
 ## Instructions
@@ -21,8 +21,10 @@ As an example take the file: `tremor_data_with_user.csv`
 
 In this example the method used from `pdkit` is `welch` but any method will work as it is now.
 
-For now the results are stored in a file
+## Saving results to file
 
+The results are stored in file. Just pass `--output="filename.csv` to define the file name. By default now is
+`output.csv`
 
 ```
 2678,10.540682,02:23:00,02:23:30
@@ -47,3 +49,16 @@ For now the results are stored in a file
 
 where
 `id, welch_value, start, end`
+
+## Streaming data
+
+This example shows how to use the google cloud streaming. Pass the following parameters:
+
+`--input_topic` is the `Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>"`
+`--output_topic` is the `Output PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>"`
+
+You'll need to register to [google cloud services](https://cloud.google.com/pubsub/?authuser=1), create a project and a
+topic.
+
+`Tip`: If you want to stream a file line by line to `gcloud` this command might come in handy:
+`cat filename.csv | while read line; do gcloud pubsub topics publish topicName --message "$line"; done`

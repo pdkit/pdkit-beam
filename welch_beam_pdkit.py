@@ -10,6 +10,7 @@ import apache_beam as beam
 from apache_beam.metrics.metric import Metrics
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
+from apache_beam.options.pipeline_options import StandardOptions
 from apache_beam.io import ReadFromText
 from apache_beam.io import WriteToText
 from apache_beam.transforms import window
@@ -20,6 +21,7 @@ import datetime
 import pdkit
 import warnings
 warnings.filterwarnings("ignore")
+
 
 class TransformTimestampDoFn(beam.DoFn):
     def process(self, element):
@@ -84,6 +86,7 @@ class CalculatePDkitMethodDo(beam.DoFn):
 class CalculatePDkitMethod(beam.PTransform):
     def __init__(self):
         super(CalculatePDkitMethod, self).__init__()
+
     def expand(self, pcoll):
         return (
             pcoll
@@ -92,6 +95,7 @@ class CalculatePDkitMethod(beam.PTransform):
 
 
 class UserDict(beam.DoFn):
+
     def process(self, team_score, window=beam.DoFn.WindowParam):
         ts_format = '%H:%M:%S'
         user, result = team_score
@@ -110,16 +114,16 @@ class ParseMagSumAcc(beam.PTransform):
         super(ParseMagSumAcc, self).__init__()
         self.window_duration = window_duration
         self.window_overlap = window_overlap
+
     def expand(self, pcoll):
         return (
             pcoll
             | 'Timestamp' >> beam.ParDo(TransformTimestampDoFn())
             | 'Window' >> beam.WindowInto(window.SlidingWindows(self.window_duration, self.window_overlap))
             | 'ParseAccEventFn' >> beam.ParDo(ParseAccEventFn())
-            # Extract username/mag_sum_acc pairs from the event data.
-            # | 'ExtractAndSumScore' >> ExtractAndMeanMagSumAcc('user')
             | 'Extract:' >> beam.ParDo(ExtractDoFn())
         )
+
 
 def run(argv=None):
     parser = argparse.ArgumentParser()
@@ -127,32 +131,44 @@ def run(argv=None):
                         dest='input',
                         default='tremor_data_with_user.csv',
                         help='Input file to process.')
+    parser.add_argument('--input_topic',
+                        help='Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>".')
+    parser.add_argument('--output_topic',
+                        help='Output PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>".')
     parser.add_argument('--output',
                         dest='output',
-                        default='window_welch_output.csv',
+                        default='output.csv',
                         help='output file to process.')
     known_args, pipeline_args = parser.parse_known_args(argv)
     options = PipelineOptions(pipeline_args)
     options.view_as(SetupOptions).save_main_session = True
+    if known_args.input_topic:
+        options.view_as(StandardOptions).streaming = True
 
     with beam.Pipeline(options=options) as p:
-        windowed_data = (p
-                         | 'Read' >> ReadFromText(known_args.input)
+        # Read from PubSub into a PCollection.
+        if known_args.input_topic:
+            messages = (p
+                        | 'Read from Stream' >> beam.io.gcp.pubsub.ReadFromPubSub(topic=known_args.input_topic)
+                        .with_output_types(bytes))
+
+        else:
+            messages = (p
+                        | 'Read from file' >> ReadFromText(known_args.input))
+
+        windowed_data = (messages
                          | 'ParseMagSumAcc' >> ParseMagSumAcc(30,10)
                          )
 
-        grouped = ( windowed_data
-                    | 'GroupWindowsByUser' >> beam.GroupByKey()
-                    | 'Calculate pdkit method' >> CalculatePDkitMethod()
-                    | 'UserScoresDict' >> beam.ParDo(UserDict())
-                  )
+        grouped = (windowed_data
+                   | 'GroupWindowsByUser' >> beam.GroupByKey()
+                   | 'Calculate pdkit method' >> CalculatePDkitMethod()
+                   | 'UserScoresDict' >> beam.ParDo(UserDict())
+                   )
 
         welch = (grouped
                  | 'Parse it' >> beam.Map(lambda elem: (elem['user'], elem['result'], elem['start'], elem['end']))
-                 # | 'GroupAndMean' >> beam.CombinePerKey(beam.combiners.MeanCombineFn())
                  )
-
-        # welch | beam.ParDo(lambda (x): print(x))
 
         # Format the counts into a PCollection of strings.
         def format_result(element):
@@ -160,7 +176,11 @@ def run(argv=None):
             return '%d,%f,%s,%s' % (user, result, start, end)
 
         output = welch | 'format' >> beam.Map(format_result)
-        output | 'write' >> WriteToText(known_args.output)
+
+        if known_args.output_topic:
+            output | 'stream output' >> beam.io.gcp.pubsub.WriteStringsToPubSub(known_args.output_topic)
+        else:
+            output | 'write' >> WriteToText(known_args.output)
 
 
 if __name__ == '__main__':
