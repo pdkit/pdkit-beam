@@ -95,10 +95,9 @@ class CalculatePDkitMethod(beam.PTransform):
 
 
 class UserDict(beam.DoFn):
-
-    def process(self, team_score, window=beam.DoFn.WindowParam):
+    def process(self, user_data, window=beam.DoFn.WindowParam):
         ts_format = '%H:%M:%S'
-        user, result = team_score
+        user, result = user_data
         window_start = window.start.to_utc_datetime().strftime(ts_format)
         window_end = window.end.to_utc_datetime().strftime(ts_format)
         yield {
@@ -150,7 +149,9 @@ def run(argv=None):
         if known_args.input_topic:
             messages = (p
                         | 'Read from Stream' >> beam.io.gcp.pubsub.ReadFromPubSub(topic=known_args.input_topic)
-                        .with_output_types(bytes))
+                        .with_output_types(bytes)
+                        | 'split lines' >> beam.FlatMap(lambda x: x.split('\n') )
+                        )
 
         else:
             messages = (p
