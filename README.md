@@ -2,9 +2,11 @@
 
 ![Beam Pdkit](https://github.com/uh-joan/beam_pdkit/blob/master/beam_pdkit.png)
 
+
 ## Install
 
 `pip install -r requirements.txt`
+
 
 ## Run
 
@@ -20,6 +22,7 @@ It takes as input acceleration data with the id at each line:
 As an example take the file: `tremor_data_with_user.csv`
 
 In this example the method used from `pdkit` is `welch` but any method will work as it is now.
+
 
 ## Saving results to file
 
@@ -52,7 +55,14 @@ where
 
 ## Streaming data
 
-This example shows how to use the google cloud streaming. Pass the following parameters:
+This example shows how to use the google cloud streaming.
+
+```
+python welch_beam_pdkit.py --input_topic "projects/<PROJECT>/topics/<TOPIC>" --output_topic
+"projects/<PROJECT>/topics/<TOPIC>"
+```
+
+where the parameters are the following:
 
 `--input_topic` is the `Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>"`
 `--output_topic` is the `Output PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>"`
@@ -61,7 +71,12 @@ You'll need to register to [google cloud services](https://cloud.google.com/pubs
 for [google cloud](https://cloud.google.com/sdk/docs/). Don't forget to create a project and a topic using for example
 the [command line](https://cloud.google.com/pubsub/docs/quickstart-cli) or using the [web interface](https://console.cloud.google.com/cloudpubsub)
 
-`Tip`: If you want to stream a file line by line to `gcloud` this command might come in handy:
+There is a supporting file that subscribes to a topic and prints out the messages that come in.
+
 ```
-cat filename.csv | while read line; do gcloud pubsub topics publish topicName --message "$line"; done
+python subscribeToGcloud.py --input_topic "projects/<PROJECT>/topics/<TOPIC>"
 ```
+
+`Tip`: To test the Pub/Sub it's recommended to publish a message with the contents of the file using the google cloud
+platform interface. It's possible to publish a message just pasting the contents of the file data.
+
